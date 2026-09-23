@@ -1,14 +1,27 @@
 "use server";
 
-export async function convertCurrency(formData: FormData): Promise<number> {
+export type Conversion = {
+  from: string;
+  to: string;
+  amount: number;
+  converted_amount: number;
+};
+
+export type ConvertState = {
+  result?: Conversion;
+  error?: string;
+};
+
+export async function convertCurrency(
+  _prevState: ConvertState,
+  formData: FormData,
+): Promise<ConvertState> {
   const fromCurrency = formData.get("from") as string;
   const toCurrency = formData.get("to") as string;
   const amount = parseFloat(formData.get("amount") as string);
 
-  console.log("Form Data:", { fromCurrency, toCurrency, amount });
-
   if (!fromCurrency || !toCurrency || isNaN(amount)) {
-    throw new Error("Invalid form data");
+    return { error: "Please pick both currencies and enter an amount." };
   }
 
   const params = new URLSearchParams({
@@ -32,10 +45,17 @@ export async function convertCurrency(formData: FormData): Promise<number> {
   );
 
   if (!response.ok) {
-    throw new Error("Failed to fetch conversion rate");
+    return { error: "Failed to fetch conversion rate." };
   }
 
   const data = await response.json();
-  console.log("Conversion Data:", data);
-  return data.result;
+
+  return {
+    result: {
+      from: fromCurrency,
+      to: toCurrency,
+      amount,
+      converted_amount: data.response.value,
+    },
+  };
 }

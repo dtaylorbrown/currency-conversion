@@ -1,37 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useActionState } from "react";
 
 import { convertCurrency } from "@/actions/convert";
 import PreviousConversions from "./PreviousConversions";
 
+import type { ConvertState } from "@/actions/convert";
 import type { Currency } from "@/lib/currency";
 
-type currencyFormValues = {
-  to: string;
-  from: string;
-  amount: number;
-};
+const initialState: ConvertState = {};
 
 const CurrencyConverter = ({ currencies }: { currencies: Currency[] }) => {
-  const [formData, setForm] = useState<currencyFormValues>({
-    to: "",
-    from: "",
-    amount: 0,
-  });
+  const [state, formAction, isPending] = useActionState(
+    convertCurrency,
+    initialState,
+  );
 
-  const handleChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-  ) => {
-    const { name, value } = event.target;
-
-    setForm((current) => ({
-      ...current,
-      [name]: value,
-    }));
-  };
-
-  console.log("form data:", formData);
+  const isSubmitDisabled = isPending || !currencies.length;
 
   return (
     <div>
@@ -40,12 +25,8 @@ const CurrencyConverter = ({ currencies }: { currencies: Currency[] }) => {
           Pick a pair, check the number, and pick up where you left off from
           your recent conversions.
         </p>
-        <form
-          action={async (formData) => {
-            await convertCurrency(formData);
-          }}
-        >
-          <select name="from" value={formData.from} onChange={handleChange}>
+        <form action={formAction}>
+          <select name="from" required>
             <option value="">Select currency</option>
             {currencies.map((currency) => (
               <option key={currency.short_code} value={currency.short_code}>
@@ -53,7 +34,7 @@ const CurrencyConverter = ({ currencies }: { currencies: Currency[] }) => {
               </option>
             ))}
           </select>
-          <select name="to" value={formData.to} onChange={handleChange}>
+          <select name="to">
             <option value="">Select currency</option>
             {currencies.map((currency) => (
               <option key={currency.short_code} value={currency.short_code}>
@@ -65,11 +46,26 @@ const CurrencyConverter = ({ currencies }: { currencies: Currency[] }) => {
             type="number"
             name="amount"
             placeholder="Amount"
-            value={formData.amount}
-            onChange={handleChange}
+            required
           />
-          <button type="submit">Convert</button>
+          <button type="submit" disabled={isSubmitDisabled}>
+            {isPending ? "Converting..." : "Convert"}
+          </button>
         </form>
+        {state.result && (
+          <div>
+            <p>
+              {state.result.amount} {state.result.from} ={" "}
+              {state.result.converted_amount} {state.result.to}
+            </p>
+          </div>
+        )}
+
+        {state.error && (
+          <div>
+            <p>Error: {state.error}</p>
+          </div>
+        )}
       </div>
       <PreviousConversions />
     </div>
