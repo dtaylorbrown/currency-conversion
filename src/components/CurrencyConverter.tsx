@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { startTransition, useActionState, useState } from "react";
 
 import { convertCurrency } from "@/actions/convert";
 import usePreviousConversions from "@/hooks/usePreviousConversions";
@@ -14,10 +14,10 @@ import styles from "./CurrencyConverter.module.css";
 const initialState: ConvertState = {};
 
 const CurrencyConverter = ({ currencies }: { currencies: Currency[] }) => {
-  const { prevConversions, addConversion } = usePreviousConversions();
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [amount, setAmount] = useState("");
+  const { prevConversions, addConversion } = usePreviousConversions();
 
   const [state, formAction, isPending] = useActionState(
     async (prevState: ConvertState, formData: FormData) => {
@@ -32,7 +32,14 @@ const CurrencyConverter = ({ currencies }: { currencies: Currency[] }) => {
     initialState,
   );
 
-  const isSubmitDisabled = isPending || !currencies.length;
+  const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    startTransition(() => formAction(formData));
+  };
+
+  const isSubmitDisabled =
+    isPending || !currencies.length || Number(amount) === state?.result?.amount;
 
   return (
     <div className={styles.converter}>
@@ -41,13 +48,13 @@ const CurrencyConverter = ({ currencies }: { currencies: Currency[] }) => {
           Pick a pair, check the number, and pick up where you left off from
           your recent conversions.
         </p>
-        <form action={formAction} className={styles["converter-form"]}>
+        <form onSubmit={handleSubmit} className={styles["converter-form"]}>
           <fieldset>
             <label>From:</label>
             <div>
               <select
                 name="from"
-                defaultValue={from}
+                value={from}
                 onChange={(e) => setFrom(e.target.value)}
               >
                 <option value="">Select currency</option>
@@ -71,7 +78,7 @@ const CurrencyConverter = ({ currencies }: { currencies: Currency[] }) => {
             <div>
               <select
                 name="to"
-                defaultValue={to}
+                value={to}
                 onChange={(e) => setTo(e.target.value)}
               >
                 <option value="">Select currency</option>
@@ -85,7 +92,11 @@ const CurrencyConverter = ({ currencies }: { currencies: Currency[] }) => {
                 type="number"
                 name="amount-to"
                 disabled
-                value={state?.result ? state.result.converted_amount : ""}
+                value={
+                  state?.result
+                    ? Number(state.result.converted_amount).toFixed(2)
+                    : ""
+                }
               />
             </div>
           </fieldset>

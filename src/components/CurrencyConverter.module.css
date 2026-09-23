@@ -30,7 +30,14 @@
   background-color: var(--color-light-background);
 }
 
+.converter input {
+  &:disabled {
+    color: #000000;
+  }
+}
+
 .converter fieldset {
+  padding: 0;
   border: none;
   & label {
     display: block;
@@ -58,8 +65,14 @@
   color: var(--color-light-background);
   font-weight: bold;
   text-transform: uppercase;
+  margin-top: var(--space-sm);
   &:hover {
     background-color: var(--color-dark-green);
+  }
+  &:disabled {
+    color: #434343;
+    background-color: var(--color-background);
+    cursor: not-allowed;
   }
 }
 
