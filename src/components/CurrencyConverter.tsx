@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 
 import { convertCurrency } from "@/actions/convert";
+import usePreviousConversions from "@/hooks/usePreviousConversions";
 import PreviousConversions from "./PreviousConversions";
 
 import type { ConvertState } from "@/actions/convert";
@@ -11,8 +12,18 @@ import type { Currency } from "@/lib/currency";
 const initialState: ConvertState = {};
 
 const CurrencyConverter = ({ currencies }: { currencies: Currency[] }) => {
+  const { prevConversions, addConversion } = usePreviousConversions();
+
   const [state, formAction, isPending] = useActionState(
-    convertCurrency,
+    async (prevState: ConvertState, formData: FormData) => {
+      const nextState = await convertCurrency(prevState, formData);
+
+      if (nextState.result) {
+        addConversion(nextState.result);
+      }
+
+      return nextState;
+    },
     initialState,
   );
 
@@ -42,16 +53,12 @@ const CurrencyConverter = ({ currencies }: { currencies: Currency[] }) => {
               </option>
             ))}
           </select>
-          <input
-            type="number"
-            name="amount"
-            placeholder="Amount"
-            required
-          />
+          <input type="number" name="amount" placeholder="Amount" required />
           <button type="submit" disabled={isSubmitDisabled}>
             {isPending ? "Converting..." : "Convert"}
           </button>
         </form>
+
         {state.result && (
           <div>
             <p>
@@ -67,7 +74,7 @@ const CurrencyConverter = ({ currencies }: { currencies: Currency[] }) => {
           </div>
         )}
       </div>
-      <PreviousConversions />
+      <PreviousConversions conversions={prevConversions} />
     </div>
   );
 };
