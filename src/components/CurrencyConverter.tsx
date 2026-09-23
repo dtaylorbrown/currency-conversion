@@ -9,6 +9,8 @@ import PreviousConversions from "./PreviousConversions";
 import type { ConvertState } from "@/actions/convert";
 import type { Currency } from "@/lib/currency";
 
+import styles from "./CurrencyConverter.module.css";
+
 const initialState: ConvertState = {};
 
 const CurrencyConverter = ({ currencies }: { currencies: Currency[] }) => {
@@ -30,14 +32,14 @@ const CurrencyConverter = ({ currencies }: { currencies: Currency[] }) => {
   const isSubmitDisabled = isPending || !currencies.length;
 
   return (
-    <div>
+    <div className={styles.converter}>
       <div>
-        <p>
+        <p className={styles["converter-description"]}>
           Pick a pair, check the number, and pick up where you left off from
           your recent conversions.
         </p>
-        <form action={formAction}>
-          <select name="from" required>
+        <form action={formAction} className={styles["converter-form"]}>
+          <select name="from">
             <option value="">Select currency</option>
             {currencies.map((currency) => (
               <option key={currency.short_code} value={currency.short_code}>
@@ -53,14 +55,16 @@ const CurrencyConverter = ({ currencies }: { currencies: Currency[] }) => {
               </option>
             ))}
           </select>
-          <input type="number" name="amount" placeholder="Amount" required />
+          <input type="number" name="amount" placeholder="Amount" />
           <button type="submit" disabled={isSubmitDisabled}>
             {isPending ? "Converting..." : "Convert"}
           </button>
         </form>
 
         {state.result && (
-          <div>
+          <div
+            className={`${styles["conversion-result"]} ${styles["conversion-success"]}`}
+          >
             <p>
               {state.result.amount} {state.result.from} ={" "}
               {state.result.converted_amount} {state.result.to}
@@ -69,7 +73,9 @@ const CurrencyConverter = ({ currencies }: { currencies: Currency[] }) => {
         )}
 
         {state.error && (
-          <div>
+          <div
+            className={`${styles["conversion-result"]} ${styles["conversion-error"]}`}
+          >
             <p>Error: {state.error}</p>
           </div>
         )}

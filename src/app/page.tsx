@@ -6,6 +6,8 @@ import {
   commonCurrencyShortCodes,
 } from "@/lib/currency";
 
+import styles from "./page.module.css";
+
 const preferredCurrencies = commonCurrencyShortCodes.map(
   (currency) => currency.short_code,
 );
@@ -27,10 +29,10 @@ export default async function Home() {
 
   return (
     <>
-      <header>
+      <header className={styles.header}>
         <h1>Currency Converter</h1>
       </header>
-      <main>
+      <main className={styles.main}>
         <CurrencyConverter currencies={sortedCurrencies} />
       </main>
     </>

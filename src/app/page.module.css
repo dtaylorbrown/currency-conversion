@@ -1,0 +1,20 @@
+.header {
+  padding: 1rem;
+  background-color: var(--color-light-background);
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  & h1 {
+    font-size: 24px;
+    color: var(--color-dark-green);
+  }
+}
+
+.main {
+  display: flex;
+  justify-content: center;
+  min-height: calc(100vh - 80px);
+  background-color: var(--color-background);
+}

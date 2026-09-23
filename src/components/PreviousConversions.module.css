@@ -1,0 +1,12 @@
+.previous-conversions {
+  background-color: var(--color-light-background);
+  padding: var(--space-lg);
+  border-color: var(--color-border);
+  border-radius: var(--border-radius);
+  & h2 {
+    font-size: 20px;
+    line-height: 1.5;
+    color: var(--color-dark-green);
+    margin-bottom: var(--space-md);
+  }
+}
