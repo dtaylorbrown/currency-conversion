@@ -10,3 +10,21 @@
     margin-bottom: var(--space-md);
   }
 }
+
+.previous-conversions-list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  max-height: 500px;
+  overflow: hidden;
+  overflow-y: auto;
+}
+
+.previous-conversions-list-item {
+  padding: var(--space-sm);
+  margin: var(--space-sm) 0;
+  border-bottom: 1px solid var(--color-border);
+  &:last-of-type {
+    border: none;
+  }
+}

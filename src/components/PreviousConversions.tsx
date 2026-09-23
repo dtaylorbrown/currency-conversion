@@ -13,9 +13,12 @@ const PreviousConversions = ({
       {conversions.length === 0 ? (
         <p>No previous conversions available.</p>
       ) : (
-        <ul>
+        <ul className={styles["previous-conversions-list"]}>
           {conversions.map((conversion, index) => (
-            <li key={index}>
+            <li
+              key={index}
+              className={styles["previous-conversions-list-item"]}
+            >
               {conversion.amount} {conversion.from} ={" "}
               {Number(conversion.converted_amount).toFixed(2)} {conversion.to}
             </li>
