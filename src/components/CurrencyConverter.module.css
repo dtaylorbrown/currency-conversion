@@ -40,7 +40,7 @@
   padding: 0;
   border: none;
   & label {
-    display: block;
+    display: inline-block;
     padding-bottom: var(--space-sm);
   }
   & div {

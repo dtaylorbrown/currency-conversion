@@ -4,6 +4,7 @@ import { startTransition, useActionState, useState } from "react";
 
 import { convertCurrency } from "@/actions/convert";
 import usePreviousConversions from "@/hooks/usePreviousConversions";
+import CurrencySelect from "./CurrencySelect";
 import PreviousConversions from "./PreviousConversions";
 
 import type { ConvertState } from "@/actions/convert";
@@ -50,20 +51,15 @@ const CurrencyConverter = ({ currencies }: { currencies: Currency[] }) => {
         </p>
         <form onSubmit={handleSubmit} className={styles["converter-form"]}>
           <fieldset>
-            <label>From:</label>
+            <label htmlFor="currency-from">From:</label>
             <div>
-              <select
+              <CurrencySelect
+                id="currency-from"
                 name="from"
+                currencies={currencies}
                 value={from}
-                onChange={(e) => setFrom(e.target.value)}
-              >
-                <option value="">Select currency</option>
-                {currencies.map((currency) => (
-                  <option key={currency.short_code} value={currency.short_code}>
-                    {currency.name} ({currency.short_code})
-                  </option>
-                ))}
-              </select>
+                onChange={setFrom}
+              />
               <input
                 type="number"
                 name="amount"
@@ -74,20 +70,15 @@ const CurrencyConverter = ({ currencies }: { currencies: Currency[] }) => {
           </fieldset>
 
           <fieldset>
-            <label>To:</label>
+            <label htmlFor="currency-to">To:</label>
             <div>
-              <select
+              <CurrencySelect
+                id="currency-to"
                 name="to"
+                currencies={currencies}
                 value={to}
-                onChange={(e) => setTo(e.target.value)}
-              >
-                <option value="">Select currency</option>
-                {currencies.map((currency) => (
-                  <option key={currency.short_code} value={currency.short_code}>
-                    {currency.name} ({currency.short_code})
-                  </option>
-                ))}
-              </select>
+                onChange={setTo}
+              />
               <input
                 type="number"
                 name="amount-to"

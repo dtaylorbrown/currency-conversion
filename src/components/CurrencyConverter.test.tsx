@@ -27,9 +27,12 @@ describe("CurrencyConverter", () => {
 
     render(<CurrencyConverter currencies={currencies} />);
 
-    const [fromSelect, toSelect] = screen.getAllByRole("combobox");
-    await user.selectOptions(fromSelect, "USD");
-    await user.selectOptions(toSelect, "GBP");
+    await user.type(screen.getByLabelText("From:"), "usd");
+    await user.click(screen.getByRole("option", { name: "US Dollar (USD)" }));
+    await user.type(screen.getByLabelText("To:"), "pound");
+    await user.click(
+      screen.getByRole("option", { name: "British Pound (GBP)" }),
+    );
     await user.type(screen.getAllByRole("spinbutton")[0], "10");
     await user.click(screen.getByRole("button", { name: "Convert" }));
 
